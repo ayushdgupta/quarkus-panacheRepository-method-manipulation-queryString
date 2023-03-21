@@ -55,17 +55,17 @@ public class EmployeeResource {
     }
 
     // this API is not working right now later we need to see how to resolve that issue.
-//    @GET
-//    @Path("/employeeOfAnOrgAndAge/{orgName}/{salary}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getEmployeeByOrgAndSalary(@PathParam("orgName") String orgName, @PathParam("salary") int salary){
+    @GET
+    @Path("/employeeOfAnOrgAndSalary/{orgName}/{salary}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEmployeeByOrgAndSalary(@PathParam("orgName") String orgName, @PathParam("salary") int salary){
         // Here we used named bind parameters i.e. we will provide a map which will contain varianle name of query string
         // and it's corresponding values
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("orgName", orgName);
-//        params.put("salary", salary);
-//        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary", params)).build();
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgName", orgName);
+        params.put("salary", salary);
+        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary", params)).build();
 
 //        return Response.ok(employeeRepo.list("orgName = ?1 and salary >= ?2", orgName, salary)).build();
-//    }
+    }
 }
