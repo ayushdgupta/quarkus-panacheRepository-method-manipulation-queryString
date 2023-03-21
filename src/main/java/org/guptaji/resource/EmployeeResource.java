@@ -1,5 +1,6 @@
 package org.guptaji.resource;
 
+import io.quarkus.panache.common.Parameters;
 import org.guptaji.entity.Employee;
 import org.guptaji.repository.EmployeeRepo;
 import org.jboss.logging.annotations.Pos;
@@ -61,11 +62,25 @@ public class EmployeeResource {
     public Response getEmployeeByOrgAndSalary(@PathParam("orgName") String orgName, @PathParam("salary") int salary){
         // Here we used named bind parameters i.e. we will provide a map which will contain varianle name of query string
         // and it's corresponding values
-        Map<String, Object> params = new HashMap<>();
-        params.put("orgName", orgName);
-        params.put("salary", salary);
-        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary", params)).build();
+        // for named bind params there are 3 methods
+        //M1->
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("orgName", orgName);
+//        params.put("salary", salary);
+//        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary", params)).build();
 
 //        return Response.ok(employeeRepo.list("orgName = ?1 and salary >= ?2", orgName, salary)).build();
+
+        // use it as-is
+        // M2->
+//        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary",
+//                Parameters.with("orgName", orgName).and("salary", salary))).build();
+
+        // generate a Map directly without creating it explicitely
+        // M3->
+        return Response.ok(employeeRepo.list("orgName = :orgName and salary >= :salary",
+                Parameters.with("orgName", orgName).and("salary", salary).map())).build();
+//        Person.find("name = :name and status = :status",
+//                Parameters.with("name", "stef").and("status", Status.Alive));
     }
 }
