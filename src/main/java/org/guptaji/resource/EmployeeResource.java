@@ -1,6 +1,7 @@
 package org.guptaji.resource;
 
 import io.quarkus.panache.common.Parameters;
+import io.quarkus.panache.common.Sort;
 import org.guptaji.entity.Employee;
 import org.guptaji.repository.EmployeeRepo;
 import org.jboss.logging.annotations.Pos;
@@ -23,6 +24,46 @@ public class EmployeeResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEmployeeData(){
         return Response.ok(employeeRepo.listAll()).build();
+    }
+
+    /**
+     * Here we are doing sorting of the data for which orgName is 'optum' and doing sorting on behalf of
+     * age and name.
+     * @return
+     */
+    @GET
+    @Path("/sortedData")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllEmployeeDataSorted(){
+        return Response.ok(employeeRepo.list("orgName", Sort.descending("age", "name"), "optum")).build();
+        
+        /*
+        Output of above API, so sorting is done based on like first code will sort on the basis of age then if
+        age of two outputs will match then code will go for name.
+        [
+  {
+    "id": 1,
+    "name": "Ayush",
+    "salary": 82000,
+    "orgName": "Optum",
+    "age": 30
+  },
+  {
+    "id": 5,
+    "name": "Vinay",
+    "salary": 100000,
+    "orgName": "Optum",
+    "age": 25
+  },
+  {
+    "id": 6,
+    "name": "Akash",
+    "salary": 89000,
+    "orgName": "optum",
+    "age": 25
+  }
+]
+         */
     }
 
     @POST
@@ -82,5 +123,19 @@ public class EmployeeResource {
                 Parameters.with("orgName", orgName).and("salary", salary).map())).build();
 //        Person.find("name = :name and status = :status",
 //                Parameters.with("name", "stef").and("status", Status.Alive));
+    }
+
+    @PUT
+    @Path("/{salary}/{age}")
+    @Transactional
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response updateEmployeeAge(@PathParam("salary") int salary, @PathParam("age") int age){
+        // ?1, ?2 act as a place holder
+        int update = employeeRepo.update("age = ?1 where salary = ?2", age, salary);
+        if (update > 0){
+            return Response.ok("Updated "+update+" data").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 }
