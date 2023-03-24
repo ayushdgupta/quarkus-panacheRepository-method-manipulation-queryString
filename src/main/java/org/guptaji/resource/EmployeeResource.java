@@ -1,5 +1,7 @@
 package org.guptaji.resource;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import org.guptaji.entity.Employee;
@@ -12,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Path("/employee")
@@ -137,5 +140,49 @@ public class EmployeeResource {
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+    }
+
+    // adding pagination to our API
+    @GET
+    @Path("/employeeDataOnPage/{pageNo}/{pageSize}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEmployeedataOnPage(@PathParam("pageNo") int pageNo, @PathParam("pageSize") int pageSize){
+
+        // for pagination we need panache query instance
+        PanacheQuery<Employee> employeePanacheQuery = employeeRepo.findAll();
+
+        if (pageSize == 0){
+            // now return the response with the default configuration like when the user click on fetchInfo tab
+            // then response should go with the default config. then later on user can select his config
+            // now set the page size
+            employeePanacheQuery.page(Page.ofSize(2));
+
+            // suppose if we don't consider the pageNo then below code refer
+            // here list method will always return first page does n't matter how many times you will hit the API.
+            List<Employee> employeeFirstPage = employeePanacheQuery.list();
+
+            // no. of pages
+            System.out.println("No of pages "+ employeePanacheQuery.pageCount());
+
+            return Response.ok(employeeFirstPage).build();
+
+        } else {
+            employeePanacheQuery.page(Page.ofSize(pageSize));
+
+            // suppose if we don't consider the pageNo then below code refer
+            // here list method will always return first page does n't matter how many times you will hit the API.
+            List<Employee> employeeFirstPage = employeePanacheQuery.list();
+
+            // to get the second page. this nextpage() was always returning second page.
+//            List<Employee> employeeSecondPage = employeePanacheQuery.nextPage().list();
+
+            List<Employee> employeeCorrespondingPageInfo = employeePanacheQuery.page(pageNo, pageSize).list();
+
+            // no. of pages
+            System.out.println("No of pages "+ employeePanacheQuery.pageCount());
+
+            return Response.ok(employeeCorrespondingPageInfo).build();
+        }
+
     }
 }
