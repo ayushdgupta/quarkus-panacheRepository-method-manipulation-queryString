@@ -185,4 +185,13 @@ public class EmployeeResource {
         }
 
     }
+
+    // named query method call (code is not working right now)
+//    @GET
+//    @Path("/namedQuery/{orgName}/{age}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response namedQueryMethodCall(@PathParam("orgName") String orgName, @PathParam("age") int age){
+//        return Response.ok(Employee.findByOrgAndAge(orgName, age)).build();
+//    }
+
 }

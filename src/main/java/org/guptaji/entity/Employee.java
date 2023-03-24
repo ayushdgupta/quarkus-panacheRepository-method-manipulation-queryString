@@ -1,11 +1,20 @@
 package org.guptaji.entity;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import java.util.List;
 
 @Entity
+//@NamedQueries({
+//        @NamedQuery(name = "Employee.getByOrgAndAge", query = "select * from Employee where orgName = ?1 and age >= ?2")
+//})
+//public class Employee extends PanacheEntity {
 public class Employee {
-
     @Id
     private Integer id;
     private String name;
@@ -24,6 +33,13 @@ public class Employee {
     public Employee() {
         // default constructor
     }
+
+    // named query
+    // Named queries can only be defined inside your JPA entity classes (being the Panache entity class,
+    // or the repository parameterized type), or on one of its super classes.
+//    public List<Employee> findByOrgAndAge(String orgName, int age){
+//        return  find("#Employee.getByOrgAndAge", orgName, age).list();
+//    }
 
     public Integer getId() {
         return id;
