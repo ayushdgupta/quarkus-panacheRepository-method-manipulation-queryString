@@ -5,6 +5,7 @@ import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import org.guptaji.entity.Employee;
+import org.guptaji.projection.EmployeeProjection;
 import org.guptaji.repository.EmployeeRepo;
 import org.jboss.logging.annotations.Pos;
 
@@ -193,5 +194,16 @@ public class EmployeeResource {
 //    public Response namedQueryMethodCall(@PathParam("orgName") String orgName, @PathParam("age") int age){
 //        return Response.ok(Employee.findByOrgAndAge(orgName, age)).build();
 //    }
+
+    // Query Projection -- here if we want to fetch only 3 fields instead of all fields (select *) from DB so
+    // for this we use query Projection in quarkus.
+    @GET
+    @Path("/queryProjection")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllEmployeeDataByProjection(){
+
+        // Here remember use .list() function in the end otherwise errors will come
+        return Response.ok(employeeRepo.findAll().project(EmployeeProjection.class).list()).build();
+    }
 
 }
